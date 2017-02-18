@@ -26,6 +26,14 @@ def multiplicative_inverse(a, m):
     else:
         return x % m
 
+def candidate(n=100000000):
+    a = []
+    for i in range(100):
+        x = random.randint(n, (10 * n))
+        if (x % 2) != 0 and (x % 3) != 0 and (x % 5) != 0 and (x % 7) != 0 and (x % 11) != 0:
+            a.append(x)
+    return a
+
 def is_prime(num):
     if num == 2:
         return True
@@ -37,9 +45,21 @@ def is_prime(num):
     return True
 
 
-def generate_keypair(p, q):
+def generate_keypair():
+
+    prime_numbers = candidate()
+    p = 0
+    q = 0
+
+    for x in prime_numbers:
+        if is_prime(x) and p == 0:
+            p = x
+        elif is_prime(x) and q == 0:
+            q = x
+            break
+
     if not (is_prime(p) and is_prime(q)):
-        raise ValueError('Both numbers must be prime.')
+        raise ValueError('One or more numbers is not prime')
     elif p == q:
         raise ValueError('p and q cannot be equal')
     n = p * q
@@ -60,27 +80,31 @@ def generate_keypair(p, q):
 
 def encrypt(pk, plaintext):
     key, n = pk
-    cipher = [(ord(char) ** key) % n for char in plaintext]
+    cipher = [pow(ord(char), key, n) for char in plaintext]
+
     return cipher
 
 
 def decrypt(pk, ciphertext):
     key, n = pk
-    plain = [chr((char ** key) % n) for char in ciphertext]
+    plain = [chr(pow(char, key, n)) for char in ciphertext]
     return ''.join(plain)
     
 
+
 if __name__ == '__main__':
-    print("RSA Encrypter/ Decrypter")
-    p = int(input("Enter a prime number (17, 19, 23, etc): "))
-    q = int(input("Enter another prime number (Not one you entered above): "))
-    print("Generating your public/private keypairs now . . .")
-    public, private = generate_keypair(p, q)
+    print("RSA encryption system")
+    '''
+    p = int(input("Enter a prime number: "))
+    q = int(input("Enter a different prime number than the one previously entered: "))
+    '''
+    print("Establishing public and private keys. ")
+    public, private = generate_keypair()
     print("Your public key is ", public ," and your private key is ", private)
-    message = input("Enter a message to encrypt with your private key: ")
-    encrypted_msg = encrypt(private, message)
+    message = input("Enter a message to be encrypted: ")
+    encrypted_msg = encrypt(public, message)
     print("Your encrypted message is: ")
     print(''.join(map(lambda x: str(x), encrypted_msg)))
-    print("Decrypting message with public key ", public ," . . .")
+    print("Using private key ", private ," to decrypt . . .")
     print("Your message is:")
-    print(decrypt(public, encrypted_msg))
+    print(decrypt(private, encrypted_msg))
