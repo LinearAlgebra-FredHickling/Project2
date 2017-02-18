@@ -94,10 +94,6 @@ def decrypt(pk, ciphertext):
 
 if __name__ == '__main__':
     print("RSA encryption system")
-    '''
-    p = int(input("Enter a prime number: "))
-    q = int(input("Enter a different prime number than the one previously entered: "))
-    '''
     print("Establishing public and private keys. ")
     public, private = generate_keypair()
     print("Your public key is ", public ," and your private key is ", private)
