@@ -32,11 +32,31 @@ def multiplicative_inverse(a, m):
 # Generates possible prime numbers
 def candidate(n=100000000):
     a = []
+    # creates a range from 0 to 100
     for i in range(100):
         x = random.randint(n, (10 * n))
         if (x % 2) != 0 and (x % 3) != 0 and (x % 5) != 0 and (x % 7) != 0 and (x % 11) != 0:
             a.append(x)
     return a
+
+
+
+def get_prime_nums():
+    primeOne = 0
+    primeTwo = 0
+
+    while True:
+        primeOne = int(input("Enter the first prime number: "))
+        if (is_prime(primeOne)):
+            break
+
+    while True:
+        primeTwo = int(input("Enter the second prime number: "))
+        if (is_prime(primeTwo)):
+            break
+
+    return (primeOne, primeTwo)
+
 
 
 # Checks for a number being prime and returns a boolean
@@ -47,27 +67,27 @@ def is_prime(num):
     # Exclude numbers less than 2 and numbers who give a remainder if divided by 2
     if num < 2 or num % 2 == 0:
         return False
+    # Loop the numbers from 3 to sqrt(num)
     for n in range(3, int(num**0.5)+2, 2):
-        print("n: ", n)
-
+        # Check if the modular returns 0
         if num % n == 0:
             return False
     return True
 
 
 # Generates the public and private key paris for encrypt and decrypt
-def generate_keypair():
+def generate_keypair(a,b):
 
-    prime_numbers = candidate()
-    p = 0
-    q = 0
+    # prime_numbers = candidate()
+    p = a
+    q = b
 
-    for x in prime_numbers:
-        if is_prime(x) and p == 0:
-            p = x
-        elif is_prime(x) and q == 0:
-            q = x
-            break
+    # for x in prime_numbers:
+    #     if is_prime(x) and p == 0:
+    #         p = x
+    #     elif is_prime(x) and q == 0:
+    #         q = x
+    #         break
 
     if not (is_prime(p) and is_prime(q)):
         raise ValueError('One or more numbers is not prime')
@@ -108,7 +128,8 @@ def decrypt(pk, ciphertext):
 if __name__ == '__main__':
     print("RSA encryption system")
     print("Establishing public and private keys. ")
-    public, private = generate_keypair()
+    primeOne, primeTwo = get_prime_nums()
+    public, private = generate_keypair(primeOne, primeTwo)
     print("Your public key is ", public ," and your private key is ", private)
     message = input("Enter a message to be encrypted: ")
     encrypted_msg = encrypt(public, message)
