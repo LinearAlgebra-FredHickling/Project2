@@ -1,6 +1,7 @@
 import random
 
 
+#Using the Euclidean Algorithm to find the Greastest Common Denominator
 def gcd(a=1, b=1):
     if a < b:
         a, b = b, a
@@ -11,6 +12,7 @@ def gcd(a=1, b=1):
         return gcd(b, (a % b))
 
 
+#Extended Euclidean Algorithm
 def extended_gcd(a, b):
     if a == 0:
         return (b, 0, 1)
@@ -19,6 +21,7 @@ def extended_gcd(a, b):
         return (g, y - (b // a) * x, x)
 
 
+# Returns the multiplicative inverse if it exist
 def multiplicative_inverse(a, m):
     g, x, y = extended_gcd(a, m)
     if g != 1:
@@ -26,6 +29,7 @@ def multiplicative_inverse(a, m):
     else:
         return x % m
 
+# Generates possible prime numbers
 def candidate(n=100000000):
     a = []
     for i in range(100):
@@ -34,17 +38,24 @@ def candidate(n=100000000):
             a.append(x)
     return a
 
+
+# Checks for a number being prime and returns a boolean
 def is_prime(num):
+    # First check for 2 b/c it's prime
     if num == 2:
         return True
+    # Exclude numbers less than 2 and numbers who give a remainder if divided by 2
     if num < 2 or num % 2 == 0:
         return False
     for n in range(3, int(num**0.5)+2, 2):
+        print("n: ", n)
+
         if num % n == 0:
             return False
     return True
 
 
+# Generates the public and private key paris for encrypt and decrypt
 def generate_keypair():
 
     prime_numbers = candidate()
@@ -74,10 +85,11 @@ def generate_keypair():
         g = gcd(e, phi)
 
     d = multiplicative_inverse(e, phi)
-    
+
     return ((e, n), (d, n))
 
 
+# Use the public key to encrypt our messagee
 def encrypt(pk, plaintext):
     key, n = pk
     cipher = [pow(ord(char), key, n) for char in plaintext]
@@ -85,11 +97,12 @@ def encrypt(pk, plaintext):
     return cipher
 
 
+# Use the private key to decrypt message
 def decrypt(pk, ciphertext):
     key, n = pk
     plain = [chr(pow(char, key, n)) for char in ciphertext]
     return ''.join(plain)
-    
+
 
 
 if __name__ == '__main__':
