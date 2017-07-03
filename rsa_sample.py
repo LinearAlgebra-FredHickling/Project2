@@ -1,4 +1,8 @@
 import random
+from enum import Enum
+
+class Error(Enum):
+  invalidPrime = '\n ERROR: Not a prime number \n'
 
 
 #Using the Euclidean Algorithm to find the Greastest Common Denominator
@@ -45,15 +49,20 @@ def get_prime_nums():
     primeOne = 0
     primeTwo = 0
 
+    # This is an infinte loop until the number given is prime
     while True:
         primeOne = int(input("Enter the first prime number: "))
         if (is_prime(primeOne)):
             break
 
+        print(Error.invalidPrime.value)
+
     while True:
         primeTwo = int(input("Enter the second prime number: "))
         if (is_prime(primeTwo)):
             break
+
+        print(Error.invalidPrime.value)
 
     return (primeOne, primeTwo)
 
@@ -78,16 +87,8 @@ def is_prime(num):
 # Generates the public and private key paris for encrypt and decrypt
 def generate_keypair(a,b):
 
-    # prime_numbers = candidate()
     p = a
     q = b
-
-    # for x in prime_numbers:
-    #     if is_prime(x) and p == 0:
-    #         p = x
-    #     elif is_prime(x) and q == 0:
-    #         q = x
-    #         break
 
     if not (is_prime(p) and is_prime(q)):
         raise ValueError('One or more numbers is not prime')
@@ -120,21 +121,22 @@ def encrypt(pk, plaintext):
 # Use the private key to decrypt message
 def decrypt(pk, ciphertext):
     key, n = pk
+    # chr returns the string representing a character represented by Unicode
     plain = [chr(pow(char, key, n)) for char in ciphertext]
     return ''.join(plain)
 
 
 
 if __name__ == '__main__':
-    print("RSA encryption system")
-    print("Establishing public and private keys. ")
+    print("\nRSA encryption system\n")
     primeOne, primeTwo = get_prime_nums()
+    print("\nEstablishing public and private keys... ")
     public, private = generate_keypair(primeOne, primeTwo)
     print("Your public key is ", public ," and your private key is ", private)
-    message = input("Enter a message to be encrypted: ")
+    message = input("\nEnter a message to be encrypted: ")
     encrypted_msg = encrypt(public, message)
     print("Your encrypted message is: ")
     print(''.join(map(lambda x: str(x), encrypted_msg)))
-    print("Using private key ", private ," to decrypt . . .")
+    print("\nUsing private key ", private ," to decrypt . . .")
     print("Your message is:")
     print(decrypt(private, encrypted_msg))
