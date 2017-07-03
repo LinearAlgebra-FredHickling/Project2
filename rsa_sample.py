@@ -113,6 +113,7 @@ def generate_keypair(a,b):
 # Use the public key to encrypt our messagee
 def encrypt(pk, plaintext):
     key, n = pk
+    # ord() returns the unicode representation of the character
     cipher = [pow(ord(char), key, n) for char in plaintext]
 
     return cipher
