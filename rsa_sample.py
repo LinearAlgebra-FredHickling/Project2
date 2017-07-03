@@ -1,19 +1,16 @@
 import random
+import math
 from enum import Enum
+import pprint
 
 class Error(Enum):
   invalidPrime = '\n ERROR: Not a prime number \n'
 
-
-#Using the Euclidean Algorithm to find the Greastest Common Denominator
-def gcd(a=1, b=1):
-    if a < b:
-        a, b = b, a
-    if b == 0:
-        return a
-    else:
-        # print(a % b)
-        return gcd(b, (a % b))
+rsaDict = {'p   ':'',
+           'q   ':'',
+           'f(n)':'',
+           'e   ':'',
+           'd   ':''}
 
 
 #Extended Euclidean Algorithm
@@ -32,17 +29,6 @@ def multiplicative_inverse(a, m):
         raise Exception('modular inverse does not exist')
     else:
         return x % m
-
-# Generates possible prime numbers
-def candidate(n=100000000):
-    a = []
-    # creates a range from 0 to 100
-    for i in range(100):
-        x = random.randint(n, (10 * n))
-        if (x % 2) != 0 and (x % 3) != 0 and (x % 5) != 0 and (x % 7) != 0 and (x % 11) != 0:
-            a.append(x)
-    return a
-
 
 
 def get_prime_nums():
@@ -70,14 +56,14 @@ def get_prime_nums():
 
 # Checks for a number being prime and returns a boolean
 def is_prime(num):
-    # First check for 2 b/c it's prime
+    # First check for 2 because our later checks would rule 2 out of being a prime number
     if num == 2:
         return True
     # Exclude numbers less than 2 and numbers who give a remainder if divided by 2
     if num < 2 or num % 2 == 0:
         return False
     # Loop the numbers from 3 to sqrt(num)
-    for n in range(3, int(num**0.5)+2, 2):
+    for n in range(3, int(math.sqrt(num))+2, 2):
         # Check if the modular returns 0
         if num % n == 0:
             return False
@@ -90,6 +76,9 @@ def generate_keypair(a,b):
     p = a
     q = b
 
+    rsaDict['p   '] = a
+    rsaDict['q   '] = b
+
     if not (is_prime(p) and is_prime(q)):
         raise ValueError('One or more numbers is not prime')
     elif p == q:
@@ -98,14 +87,24 @@ def generate_keypair(a,b):
 
     phi = (p-1) * (q-1)
 
+    rsaDict['f(n)'] = phi
+
     e = random.randrange(1, phi)
 
-    g = gcd(e, phi)
+    g = math.gcd(e, phi)
     while g != 1:
         e = random.randrange(1, phi)
-        g = gcd(e, phi)
+        g = math.gcd(e, phi)
 
     d = multiplicative_inverse(e, phi)
+
+    # If d and e are equal it defeats the point of having a public and private key
+    if (d == e):
+        raise ValueError('d and e are equal. Use larger prime numbers')
+
+
+    rsaDict['e   '] = e
+    rsaDict['d   '] = d
 
     return ((e, n), (d, n))
 
@@ -133,6 +132,11 @@ if __name__ == '__main__':
     primeOne, primeTwo = get_prime_nums()
     print("\nEstablishing public and private keys... ")
     public, private = generate_keypair(primeOne, primeTwo)
+
+
+    for k,v in rsaDict.items():
+        print(k, ':', v)
+
     print("Your public key is ", public ," and your private key is ", private)
     message = input("\nEnter a message to be encrypted: ")
     encrypted_msg = encrypt(public, message)
@@ -141,3 +145,4 @@ if __name__ == '__main__':
     print("\nUsing private key ", private ," to decrypt . . .")
     print("Your message is:")
     print(decrypt(private, encrypted_msg))
+    print('\n')
