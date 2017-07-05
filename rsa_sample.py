@@ -78,19 +78,25 @@ def is_prime(num):
     return True
 
 
-# Generates the public and private key paris for encrypt and decrypt
+# Generates the public and private key pairs for encrypt and decrypt
 def generate_keypair(a, b):
 
     p = a
     q = b
 
+    # Store rsa values in a dictionary to display
     rsaDict['p   '] = a
     rsaDict['q   '] = b
 
+    # Check if p and q is prime
     if not (is_prime(p) and is_prime(q)):
+        # Exit with a value error
         raise ValueError('One or more numbers is not prime')
     elif p == q:
+        # Exit with a value error
         raise ValueError('p and q cannot be equal')
+
+    # Multiply the two prime numbers if they pass the above test
     n = p * q
 
     phi = (p - 1) * (q - 1)
@@ -100,6 +106,8 @@ def generate_keypair(a, b):
     e = random.randrange(1, phi)
 
     g = math.gcd(e, phi)
+
+    # Loop until g does not equal 1
     while g != 1:
         e = random.randrange(1, phi)
         g = math.gcd(e, phi)
@@ -111,6 +119,7 @@ def generate_keypair(a, b):
     if (d == e):
         raise ValueError('d and e are equal. Use larger prime numbers')
 
+    # Store rsa values in a dictionary to display
     rsaDict['e   '] = e
     rsaDict['d   '] = d
 
