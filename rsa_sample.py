@@ -16,12 +16,14 @@ rsaDict = {'p   ': '',
            'd   ': ''}
 
 
-# Extended Euclidean Algorithm
+# Recursive Extended Euclidean Algorithm
 def extended_gcd(a, b):
     if a == 0:
         return (b, 0, 1)
     else:
+        # '%' means modulus. Returns remainder
         g, x, y = extended_gcd(b % a, a)
+        # The '//' means Floor division. 9//2 = 4
         return (g, y - (b // a) * x, x)
 
 
@@ -103,7 +105,6 @@ def generate_keypair(a, b):
         g = math.gcd(e, phi)
 
     d = multiplicative_inverse(e, phi)
-
 
     # If d and e are equal it defeats the point of having a
     # public and private key
