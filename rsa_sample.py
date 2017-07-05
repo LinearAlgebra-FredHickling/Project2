@@ -88,7 +88,7 @@ def generate_keypair(a, b):
     rsaDict['p   '] = a
     rsaDict['q   '] = b
 
-    # Check if p and q is prime
+    # Check if p and q are prime
     if not (is_prime(p) and is_prime(q)):
         # Exit with a value error
         raise ValueError('One or more numbers is not prime')
@@ -108,6 +108,7 @@ def generate_keypair(a, b):
     g = math.gcd(e, phi)
 
     # Loop until g does not equal 1
+    # if it does equal 1 they're relatively prime
     while g != 1:
         e = random.randrange(1, phi)
         g = math.gcd(e, phi)
