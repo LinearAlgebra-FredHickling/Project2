@@ -1,19 +1,22 @@
 import random
 import math
 from enum import Enum
-import pprint
 
+
+# A class used to represent common errors I'd like to print out
 class Error(Enum):
-  invalidPrime = '\n ERROR: Not a prime number \n'
-
-rsaDict = {'p   ':'',
-           'q   ':'',
-           'f(n)':'',
-           'e   ':'',
-           'd   ':''}
+    invalidPrime = '\n ERROR: Not a prime number \n'
 
 
-#Extended Euclidean Algorithm
+# Dictionary used to hold values for RSA
+rsaDict = {'p   ': '',
+           'q   ': '',
+           'f(n)': '',
+           'e   ': '',
+           'd   ': ''}
+
+
+# Extended Euclidean Algorithm
 def extended_gcd(a, b):
     if a == 0:
         return (b, 0, 1)
@@ -31,6 +34,7 @@ def multiplicative_inverse(a, m):
         return x % m
 
 
+# This function will ask for two prime numbers and return a tuple of ints
 def get_prime_nums():
     primeOne = 0
     primeTwo = 0
@@ -43,6 +47,7 @@ def get_prime_nums():
 
         print(Error.invalidPrime.value)
 
+    # Infinte loop until a number that is prime is given
     while True:
         primeTwo = int(input("Enter the second prime number: "))
         if (is_prime(primeTwo)):
@@ -53,17 +58,18 @@ def get_prime_nums():
     return (primeOne, primeTwo)
 
 
-
 # Checks for a number being prime and returns a boolean
 def is_prime(num):
-    # First check for 2 because our later checks would rule 2 out of being a prime number
+    # First check for 2 because our later checks would
+    # rule 2 out of being a prime number
     if num == 2:
         return True
-    # Exclude numbers less than 2 and numbers who give a remainder if divided by 2
+    # Exclude numbers less than 2 and numbers who give
+    # a remainder if divided by 2
     if num < 2 or num % 2 == 0:
         return False
     # Loop the numbers from 3 to sqrt(num)
-    for n in range(3, int(math.sqrt(num))+2, 2):
+    for n in range(3, int(math.sqrt(num)) + 2, 2):
         # Check if the modular returns 0
         if num % n == 0:
             return False
@@ -71,7 +77,7 @@ def is_prime(num):
 
 
 # Generates the public and private key paris for encrypt and decrypt
-def generate_keypair(a,b):
+def generate_keypair(a, b):
 
     p = a
     q = b
@@ -85,7 +91,7 @@ def generate_keypair(a,b):
         raise ValueError('p and q cannot be equal')
     n = p * q
 
-    phi = (p-1) * (q-1)
+    phi = (p - 1) * (q - 1)
 
     rsaDict['f(n)'] = phi
 
@@ -98,10 +104,11 @@ def generate_keypair(a,b):
 
     d = multiplicative_inverse(e, phi)
 
-    # If d and e are equal it defeats the point of having a public and private key
+
+    # If d and e are equal it defeats the point of having a
+    # public and private key
     if (d == e):
         raise ValueError('d and e are equal. Use larger prime numbers')
-
 
     rsaDict['e   '] = e
     rsaDict['d   '] = d
@@ -126,23 +133,22 @@ def decrypt(pk, ciphertext):
     return ''.join(plain)
 
 
-
+# This code runs everytime the document is called
 if __name__ == '__main__':
     print("\nRSA encryption system\n")
     primeOne, primeTwo = get_prime_nums()
     print("\nEstablishing public and private keys... ")
     public, private = generate_keypair(primeOne, primeTwo)
 
-
-    for k,v in rsaDict.items():
+    for k, v in rsaDict.items():
         print(k, ':', v)
 
-    print("Your public key is ", public ," and your private key is ", private)
+    print("Your public key is ", public, " and your private key is ", private)
     message = input("\nEnter a message to be encrypted: ")
     encrypted_msg = encrypt(public, message)
     print("Your encrypted message is: ")
     print(''.join(map(lambda x: str(x), encrypted_msg)))
-    print("\nUsing private key ", private ," to decrypt . . .")
+    print("\nUsing private key ", private, " to decrypt . . .")
     print("Your message is:")
     print(decrypt(private, encrypted_msg))
     print('\n')
